@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:id="@+id/root"
     android:background="#CCC"
     tools:context=".MainActivity" >
 
@@ -12,4 +13,4 @@
 	    android:layout_gravity="center"
 	    android:overScrollMode="never" />
 
-</RelativeLayout><!-- From: file:/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/src/main/res/layout/activity_main.xml -->
+</FrameLayout><!-- From: file:/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/src/main/res/layout/activity_main.xml -->
