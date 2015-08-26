@@ -2,25 +2,25 @@
 <items version="2" >
 
     <item
-        jar="/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
-        <dex dex="/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/build/intermediates/pre-dexed/debug/classes-1582d2d1bbb5491ba8cca29b1278cbcf911c8211.jar" />
-    </item>
-    <item
-        jar="/Users/navinpd/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
-        <dex dex="/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.0-5116bdf316c626fbceaa8f2d4a4360d4ee6d82a8.jar" />
-    </item>
-    <item
-        jar="/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/libs/internal_impl-23.0.0.jar"
+        jar="D:\FastaCash\SimpleInfiniteCarousel2\SimpleInfiniteCarousel2\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\libs\internal_impl-23.0.0.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
-        <dex dex="/Users/navinpd/Documents/SimpleInfiniteCarousel2/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.0-1eb9cfba1b8f733e5131c03671d0e2d18695dc6b.jar" />
+        <dex dex="D:\FastaCash\SimpleInfiniteCarousel2\SimpleInfiniteCarousel2\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.0-861749db7f6a755910023b4f0b79b9823e9f57cf.jar" />
+    </item>
+    <item
+        jar="D:\FastaCash\SimpleInfiniteCarousel2\SimpleInfiniteCarousel2\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="D:\FastaCash\SimpleInfiniteCarousel2\SimpleInfiniteCarousel2\app\build\intermediates\pre-dexed\debug\classes-84d066b3a920ab14f7d15a2fe67f33102e3074fb.jar" />
+    </item>
+    <item
+        jar="C:\Users\Areef\AppData\Local\Android\sdk1\extras\android\m2repository\com\android\support\support-annotations\23.0.0\support-annotations-23.0.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="D:\FastaCash\SimpleInfiniteCarousel2\SimpleInfiniteCarousel2\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.0-95de9b2535ace72577d11f88f1b16d7d140a6095.jar" />
     </item>
 
 </items>
