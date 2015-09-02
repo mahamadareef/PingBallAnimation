@@ -1,23 +1,164 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:id="@+id/root"
     android:background="#CCC"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-	<!--<android.support.v4.view.ViewPager
-	    android:id="@+id/myviewpager"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:layout_gravity="center"
-	    android:overScrollMode="never" />-->
+    <!--<android.support.v4.view.ViewPager
+        android:id="@+id/myviewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:overScrollMode="never" />-->
 
-	<net.leolink.android.simpleinfinitecarousel.CustomViewPager
-		android:id="@+id/myviewpager"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_gravity="center"
-		android:overScrollMode="never" />
+    <net.leolink.android.simpleinfinitecarousel.CustomViewPager
+        android:id="@+id/myviewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:overScrollMode="never" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+
+        <GridView
+            android:id="@+id/grid_send_to"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:numColumns="4"
+            android:stretchMode="columnWidth" />
+
+        <GridView
+            android:id="@+id/grid_ask_from"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="4dp"
+            android:numColumns="4"
+            android:stackFromBottom="true"
+            android:stretchMode="columnWidth" />
+
+        <ImageView
+            android:id="@+id/image_send_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/grid_send_to" />
+
+        <ImageView
+            android:id="@+id/image_ask_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/grid_ask_from" />
+
+        <LinearLayout
+            android:id="@+id/detector_send_to"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_below="@id/image_send_to"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/detector_ask_from"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_above="@id/image_ask_from"
+            android:orientation="horizontal" />
+
+        <LinearLayout
+            android:id="@+id/detector_center"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_above="@id/detector_ask_from"
+            android:layout_below="@id/detector_send_to"
+            android:orientation="horizontal" />
+
+        <RelativeLayout
+            android:id="@+id/circle"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/image_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/money_ondrag" />
+
+                <TextView
+                    android:id="@+id/text_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Money"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/image_recharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+
+                <TextView
+                    android:id="@+id/text_recharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REcharge"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/swipe_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="visible" />
+
+
+        <ImageView
+            android:id="@+id/drag_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:alpha="0.5"
+            android:src="@drawable/money_ondrag"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
 
 </FrameLayout><!-- From: file:/D:/FastaCash/SimpleInfiniteCarousel2/SimpleInfiniteCarousel2/app/src/main/res/layout/activity_main.xml -->

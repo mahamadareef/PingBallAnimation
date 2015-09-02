@@ -15,22 +15,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class MyPagerAdapter extends FragmentPagerAdapter implements
         CustomViewPager2.OnPageChangeListener, CustomOntouchListener {
 
     public MyLinearLayout cur = null;
     private MyLinearLayout previous = null;
-    private MyLinearLayout next = null, next2next = null, previous2previous = null;
+    private MyLinearLayout next = null;
     private MainActivity context;
     private FragmentManager fm;
-    LinearLayout.LayoutParams layoutParams = null;
     private float scale;
     CustomViewPager customViewPager;
-
+    private static final float SCALE = (80 / 200f) * 1.25f;
     // Long press in swipe ball
     boolean isTouchedLong = false;
     private int duration = 500;
@@ -46,17 +46,15 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
     private float positionOffset = 0.0f, first_offset = 0.0f;
     private boolean scrollStarted, checkDirection;
     private static final float thresholdOffset = 0.8f;
-    float tempfloat = 0.1f;
     int scroll_state = -1;
     boolean first_time = true;
     boolean directionRight = false;
     boolean left = false, right = false, firstAttemp = true;
     ImageView iv = null;
-    float currentX = 0;// cur.getX();
-    float currentY = 0;// cur.getY();
+    float currentX = 0;
+    float currentY = 0;
     int windowwidth = 0;
     int windowheight = 0;
-
 
 
     public MyPagerAdapter(MainActivity context, FragmentManager fm, TouchAction action, View rootView) {
@@ -101,32 +99,103 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
     @Override
     public void onPageScrolled(final int position, float positionOffset, int positionOffsetPixels) {
 
-        ImageView iv = null;
+        Log.e("", "Onscroll   " + positionOffset + " // " + scroll_state + " // " + pageSelected + " // " + cur);
+
+
         isTouchedLong = false;
-        tempfloat += 0.005;
         this.positionOffset = positionOffset;
-//        Log.e(TAG, "OnPageScrolled " + positionOffsetPixels+" //  "+windowwidth);
+        if (scroll_state != 2) {
+            cur = getRootView(pageSelected);
+            iv = (ImageView) cur.getChildAt(0);
+            next = getRootView(pageSelected + 1);
+            previous = getRootView(pageSelected - 1);
+            if (first_time) {
+                first_time = !first_time;
+                first_offset = positionOffset;
+            }
+        }
 
-        cur = getRootView(pageSelected);
-        iv = (ImageView) cur.getChildAt(0);
-        next = getRootView(pageSelected + 1);
-        previous = getRootView(pageSelected - 1);
-//        firstAttemp = false;
+        setLongListener();
 
-//        setLayoutParams(null);
+        if (positionOffset < 1.0f && positionOffset > 0.0f) {
+            if (scroll_state == 1) {
+                if (first_offset < positionOffset) {   //Left scoll
+
+                    if (!right) { //  right boolean declared because pagescroll may return any value
+                        left = true;
+                        if (MainActivity.SMALL_SCALE + positionOffset <= MainActivity.BIG_SCALE) {
+                            next.setScaleBoth(MainActivity.SMALL_SCALE + positionOffset);
+                            cur.setScaleBoth(MainActivity.BIG_SCALE - positionOffset);
+                        }
+
+                    }
+                } else if (first_offset > positionOffset) { // right scroll
+                    if (!left) {
+                        right = true;
+                        if (MainActivity.BIG_SCALE - positionOffset <= MainActivity.BIG_SCALE) {
+                            if ((MainActivity.SMALL_SCALE + (MainActivity.BIG_SCALE - positionOffset)) <= MainActivity.BIG_SCALE)
+                                previous.setScaleBoth(MainActivity.SMALL_SCALE + (MainActivity.BIG_SCALE - positionOffset));
+                            if (positionOffset >= MainActivity.SMALL_SCALE)
+                                cur.setScaleBoth(positionOffset);
+                        }
+                    }
+                }
 
 
+            }
+            if (scroll_state == 2) {
+
+                if (pageSelected == pageSelectedOld) {
+
+                    next.setScaleBoth(MainActivity.SMALL_SCALE);
+                    cur.setScaleBoth(MainActivity.BIG_SCALE);
+                    previous.setScaleBoth(MainActivity.SMALL_SCALE);
+
+                } else {
+                    if (pageSelected == pageSelectedOld + 2 || pageSelected == pageSelectedOld - 2) {
+                        Log.e(TAG, "Position jumped to 2nd one");
+
+                        cur = getRootView(pageSelected);
+                        iv = (ImageView) cur.getChildAt(0);
+                        next = getRootView(pageSelected + 1);
+                        previous = getRootView(pageSelected - 1);
+                        setLongListener();
+                        next.setScaleBoth(MainActivity.SMALL_SCALE);
+                        cur.setScaleBoth(MainActivity.BIG_SCALE);
+                        previous.setScaleBoth(MainActivity.SMALL_SCALE);
+                    } else {
+                        if (left) {
+                            next.setScaleBoth(MainActivity.BIG_SCALE);
+                            cur.setScaleBoth(MainActivity.SMALL_SCALE);
+                        }
+                        if (right) {
+                            previous.setScaleBoth(MainActivity.BIG_SCALE);
+                            cur.setScaleBoth(MainActivity.SMALL_SCALE);
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+
+    private void setLongListener() {
         iv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 currentX = cur.getX();
                 currentY = cur.getY();
-                Log.e(TAG, "Long Press " + position + " // " + currentX + " // " + currentY);
                 customViewPager.setPagingEnabled(false);
-                cur.animate().scaleX(0.8f).scaleY(0.8f).setDuration(duration);
+
+//                snapToThumb(cur,cur.getX(),cur.getY());
+
+                cur.animate().scaleX(SCALE).scaleY(SCALE).setDuration(duration);
+
                 previous.animate().alpha(0).translationX(-58).setDuration(duration);
                 next.animate().alpha(0).translationX(58).setDuration(duration);
-
                 isTouchedLong = true;
                 action.requestTouch(true);
                 view.setOnTouchListener(listener);
@@ -136,83 +205,84 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
 
         });
 
-
-        if (pageSelectedOld == pageSelected) {
-
-            if (positionOffset < 1.0f && positionOffset > 0.0f) {
-
-
-                if (first_time) {
-                    first_time = !first_time;
-                    first_offset = positionOffset;
-                }
-
-                if (first_offset < positionOffset) {   //Left scoll
-//                    Log.e(TAG, "Page state going left " + (MainActivity.SMALL_SCALE + positionOffset + " // " + positionOffset) + " // " + scroll_state + " // " + pageSelected);
-//                    if (MainActivity.SMALL_SCALE + positionOffset <= MainActivity.BIG_SCALE) {
-//                        next.setScaleBoth(MainActivity.SMALL_SCALE + positionOffset);
-//                        cur.setScaleBoth(MainActivity.BIG_SCALE - positionOffset);
-//                    }
+//        iv.setOnTouchListener(new View.OnTouchListener() {
+//            GestureDetector mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+//                @Override
+//                public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+////                    onPan(Utility.convertPixelsToDp((e2.getX() - e1.getX()), getActivity()), Utility.convertPixelsToDp((e2.getY() - e1.getY()), getActivity()));
+//                    return true;
+//                }
 //
-                    if (!right) { //  right boolean declared because pagescroll may return any value
-                        left = true;
-//                        Log.e(TAG, "Page state going left " + (MainActivity.SMALL_SCALE + tempfloat));
-//                        Log.e(TAG, "Page state going left " + (MainActivity.SMALL_SCALE + tempfloat + " // "+positionOffset));
-                        if ((MainActivity.SMALL_SCALE + tempfloat) <= MainActivity.BIG_SCALE) {
-//                            Log.e(TAG, "Next scaling");
-//                            next.setScaleBoth(MainActivity.SMALL_SCALE + tempfloat);
-//                            cur.setScaleBoth(MainActivity.BIG_SCALE - tempfloat);
+//                @Override
+//                public void onLongPress(MotionEvent e) {
+//                    Log.e("","OnLOngPress New ");
+//                    super.onLongPress(e);
+//                    if ((e.getX() > cur.getX() && e.getX() < (cur.getX() + cur.getWidth()))
+//                            && (e.getY() > cur.getY() && e.getY() < (cur.getY() + cur.getHeight()))) {
+//
+//                        float x = e.getX() / X2;
+//                        float y = e.getY() / Y2;
+//
+//
+//                        snapToThumb(cur, e.getX(), e.getY());
+//                    }
+//                }
+//            });
+//
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Log.e("","Single");
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//
+//                }
+//
+//                return true;
+//            }
+//        });
 
-                        }
-                        if (MainActivity.SMALL_SCALE + positionOffset <= MainActivity.BIG_SCALE) {
-                            next.setScaleBoth(MainActivity.SMALL_SCALE + positionOffset);
-                            cur.setScaleBoth(MainActivity.BIG_SCALE - positionOffset);
-                        }
+    }
+
+    private void snapToThumb(final View view, final float X, final float Y) {
+        ScaleAnimation anim = new ScaleAnimation(1f, SCALE, 1f, SCALE, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+
+        TranslateAnimation anim2 = new TranslateAnimation(0, X - view.getX() - view.getWidth() * SCALE / 2, 0, Y - view.getY() - view.getHeight() * SCALE / 2);
+        AnimationSet animation = new AnimationSet(true);
+        animation.addAnimation(anim);
+        animation.addAnimation(anim2);
+        animation.setDuration(DURATION_ANIMATION);
+        animation.setInterpolator(context, android.R.interpolator.linear);
+        animation.setFillAfter(false);
+
+        animation.setAnimationListener(
+                new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
 
                     }
-                } else if (first_offset > positionOffset) { // right scroll
-//                    Log.e(TAG, "Page state going right  " + (MainActivity.BIG_SCALE - positionOffset) + " // " + positionOffset + " // " + scroll_state + " // " + pageSelected);
 
-//                    if (MainActivity.BIG_SCALE - positionOffset <= MainActivity.BIG_SCALE) {
-//                        Log.e(TAG, " ........................ " + (MainActivity.BIG_SCALE - positionOffset));
-//                        previous.setScaleBoth(MainActivity.BIG_SCALE - positionOffset);
-////                        cur.setScaleBoth(positionOffset);
-//                        cur.setScaleBoth(positionOffset-MainActivity.BIG_SCALE);
-//                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // Instantiates the drag shadow builder.
+//                        startStopDrag(X, Y, pingBallStarted);
+//                        View.DragShadowBuilder myShadow = new MyDragShadowBuilder(view, PingBallFragment.this.getActivity());
+//                        view.startDrag(null,  // the data to be dragged
+//                                myShadow,  // the drag shadow builder
+//                                null,      // no need to use local data
+//                                0          // flags (not currently used, set to 0)
+//                        );
+//                        if (!pingBallStarted)
+//                            showWobble();
 
+                    }
 
-                    if (!left) {
-                        right = true;
-//                        Log.e(TAG, "Page state going right  " + (MainActivity.SMALL_SCALE + tempfloat));
-//                        Log.e(TAG, "Page state going right  " + (MainActivity.BIG_SCALE - positionOffset) + " // "+positionOffset+" // "+scroll_state);
-                        if ((MainActivity.BIG_SCALE - tempfloat) >= MainActivity.SMALL_SCALE) {
-//                            Log.e(TAG, "Scale right");
-//                            previous.setScaleBoth(MainActivity.SMALL_SCALE + tempfloat);
-//                            cur.setScaleBoth(MainActivity.BIG_SCALE - tempfloat);
-                        }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
 
-                        if (MainActivity.BIG_SCALE - positionOffset <= MainActivity.BIG_SCALE) {
-//                            Log.e(TAG, " ........................ " + (MainActivity.BIG_SCALE - positionOffset));
-                            if ((MainActivity.SMALL_SCALE + (MainActivity.BIG_SCALE - positionOffset)) <= MainActivity.BIG_SCALE)
-                                previous.setScaleBoth(MainActivity.SMALL_SCALE + (MainActivity.BIG_SCALE - positionOffset));
-//                        cur.setScaleBoth(positionOffset);
-                            if (positionOffset >= MainActivity.SMALL_SCALE)
-                                cur.setScaleBoth(positionOffset);
-                        }
-
-
-//
-//
                     }
                 }
-
-
-            }
-        }
-
-
-
-
+        );
+        view.startAnimation(animation);
     }
 
     private View.OnTouchListener listener = new View.OnTouchListener() {
@@ -222,12 +292,6 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
 
             if (isTouchedLong) {
                 Log.e(TAG, "TouchListener " + isTouchedLong);
-
-
-                final int X = (int) event.getRawX();
-                final int Y = (int) event.getRawY();
-                LinearLayout.LayoutParams param = (LinearLayout.LayoutParams) cur.getLayoutParams();
-
 
                 float rawX = event.getX();
                 float rawY = event.getY();
@@ -241,7 +305,8 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
                         previous.animate().alpha(1).translationX(0).setDuration(duration);
                         cur.animate().scaleX(1).scaleY(1).setDuration(duration);
 
-                        cur.animate().x(currentX).y(currentY).setDuration(500).start(); // revert to original position 
+
+                        cur.animate().x(currentX).y(currentY).setDuration(500).start(); // revert to original position
                         // param.gravity = Gravity.
                         action.requestTouch(true);
                         isTouchedLong = !isTouchedLong;
@@ -265,26 +330,31 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
                         float diffX = x_cord - currentX;
                         float diffY = y_cord - currentY;
 
-                        Log.e(TAG, "Difference  " + diffX + " // " + diffY);
+                        Log.e(TAG, "Difference  " + cur.getHeight() + " // " + cur.getHeight() / 2);
 
                         cur.animate()
-                                .x(currentX + diffX - 100)
-                                .y(currentY + diffY - 200)
+                                .x((event.getRawX() - (cur.getWidth() / 2)))
+                                .y((event.getRawY() - (cur.getHeight()/2)))
                                 .setDuration(0)
                                 .start();
+
+//                        cur.animate()
+//                                .x(currentX + diffX - 100)
+//                                .y(currentY + diffY - 200)
+//                                .setDuration(0)
+//                                .start();
+//                        cur.animate().scaleX(SCALE).x((e.getX() - (cur.getWidth() / 2))).scaleY(SCALE).
+//                                y((e.getY() - (cur.getHeight() / 2))).setDuration(duration);
 
                         break;
 
                     case MotionEvent.ACTION_DOWN:
                         Log.e(TAG, "Action Down");
-//                        _xDelta = cur.getX() - event.getRawX();
-//                        _yDelta = cur.getY() - event.getRawY();
                         dX = v.getX() - event.getRawX();
                         dY = v.getY() - event.getRawY();
                         break;
 
                 }
-//                cur.invalidate();
                 return false;
             }
 
@@ -331,33 +401,19 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
 
     @Override
     public void onPageSelected(int position) {
-        tempfloat = 0.1f;
         this.pageSelected = position;
-
-        if (next != null) {
-//            setLayoutParams(null);
-
-        }
-
-//        Log.e(TAG, "PageSelected " + position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-//        Log.e(TAG, "11111 Scroll State changed " + state);
-        this.scroll_state = state;
-        if (pageSelectedOld != pageSelected) {
-//            this.scroll_state = state;
-        }
 
+        this.scroll_state = state;
         if (!scrollStarted && state == ViewPager.SCROLL_STATE_DRAGGING) {
             scrollStarted = true;
             checkDirection = true;
         } else {
             scrollStarted = false;
         }
-        tempfloat = 0.1f;
-
 //        Log.e(TAG, "Page state changed  " + state + " // " + pageSelected);
         switch (state) {
             case 0:
@@ -366,15 +422,18 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
                 right = false;
                 first_offset = 0.0f;
                 firstAttemp = true;
-//                Log.e(TAG,"Scroll state in state changed "+scroll_state);
-//                if (pageSelectedOld == pageSelected) {
-                cur.setScaleBoth(MainActivity.BIG_SCALE);//SMALL_SCALE + tempfloat);
-                // previous.setScaleBoth(MainActivity.SMALL_SCALE - tempfloat);
-                next.setScaleBoth(MainActivity.SMALL_SCALE);//BIG_SCALE - tempfloat);
-                previous.setScaleBoth(MainActivity.SMALL_SCALE);
-//                }
 
-//                setLayoutParams(null);
+
+                float temp = 0.05f;
+
+                if (pageSelected != pageSelectedOld) {
+                    cur = getRootView(pageSelected);
+                    iv = (ImageView) cur.getChildAt(0);
+                    next = getRootView(pageSelected + 1);
+                    previous = getRootView(pageSelected - 1);
+                    setLongListener();
+                }
+
                 break;
             case 1:
                 pageSelectedOld = pageSelected;
@@ -396,7 +455,6 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
     @Override
     public void ontouch(MotionEvent event) {
         Log.e(TAG, "Custom View Pager in Adapter " + event.getRawX() + " // " + event.getRawY());
-//        setLayoutParams(event);
     }
 
 
@@ -455,80 +513,7 @@ public class MyPagerAdapter extends FragmentPagerAdapter implements
             // Draws the ColorDrawable in the Canvas passed in from the system.
             shadow.draw(canvas);
         }
+
     }
-
-    float getFirst_offsetX = -1;
-
-    private void setLayoutParams(MotionEvent event) {
-
-        float center_gravity = (windowwidth / 2) - (cur.getWidth() / 2);
-        float right_gravity = windowwidth - cur.getWidth();
-        float left_gravity = 0;
-
-        float curLeftMargin = center_gravity;
-        float nextLeftMargin = left_gravity;
-        float previousleftMargin = right_gravity;
-        if (event != null) {
-            if (firstAttemp) {
-                if (event.getRawX() > 0.0 && event.getRawX() < windowwidth) {
-                    getFirst_offsetX = event.getRawX();
-                    firstAttemp = !firstAttemp;
-                }
-            }
-            Log.e(TAG, "Next left Margin  " + (getFirst_offsetX-event.getRawX()) + " // " + center_gravity);
-            if ((getFirst_offsetX-event.getRawX()) <= center_gravity) {
-
-                nextLeftMargin = (getFirst_offsetX - event.getRawX());
-                curLeftMargin= center_gravity - (getFirst_offsetX - event.getRawX());
-            }else{
-                curLeftMargin = left_gravity;
-                nextLeftMargin = center_gravity;
-
-            }
-            Log.e(TAG, "Next left Margin  22222 "+nextLeftMargin);
-//            if(event.getRawX()<=center_gravity) {
-//                previousleftMargin = event.getRawX();
-//            }else{
-//                previousleftMargin = center_gravity;
-//            }
-//            curLeftMargin = event.getRawX();
-        }
-
-
-        LinearLayout.LayoutParams nextLayoutParams = (LinearLayout.LayoutParams) next.getLayoutParams();
-        nextLayoutParams.leftMargin = 235;//(int) nextLeftMargin;
-//        nextLayoutParams.gravity = Gravity.LEFT;
-        next.setLayoutParams(nextLayoutParams);
-        LinearLayout.LayoutParams curLayoutParams = (LinearLayout.LayoutParams) cur.getLayoutParams();
-        curLayoutParams.leftMargin = (int)curLeftMargin;//(int) center_gravity;
-//        curLayoutParams.gravity = Gravity.CENTER;
-        cur.setLayoutParams(curLayoutParams);
-        LinearLayout.LayoutParams previousLayoutParams = (LinearLayout.LayoutParams) previous.getLayoutParams();
-        previousLayoutParams.leftMargin = (int) previousleftMargin;//(int)windowwidth-cur.getWidth();
-//        previousLayoutParams.gravity = Gravity.RIGHT;
-        previous.setLayoutParams(previousLayoutParams);
-    }
-
-//    class Task implements Runnable {
-//        @Override
-//
-//        public void run() {
-//            while (threadStarter) {
-////                Log.e(TAG, "Thread is Running " + positionOffset);
-//
-//            }
-////            for (int i = 0; i <= 10; i++) {
-////                final int value = i;
-////                try {
-////                    Thread.sleep(100);
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-////
-////            }
-//        }
-//
-//
-//    }
 
 }

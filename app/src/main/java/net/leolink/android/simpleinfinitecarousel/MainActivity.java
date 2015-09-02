@@ -19,6 +19,7 @@ public class MainActivity extends FragmentActivity implements MyPagerAdapter.Tou
     public MyPagerAdapter adapter;
     public CustomViewPager2 pager;
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

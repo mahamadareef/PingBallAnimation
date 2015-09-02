@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MyFragment extends Fragment {
@@ -25,7 +24,7 @@ public class MyFragment extends Fragment {
 			return null;
 		}
 		
-		LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.mf, container, false);
+		View layout = inflater.inflate(R.layout.mf, container, false);
 		
 		int pos = this.getArguments().getInt("pos");
 		TextView tv = (TextView) layout.findViewById(R.id.text);
